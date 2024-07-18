@@ -1,2 +1,2 @@
-# penguin-world-adventure
+# pwa-text-editor
 Progressive Web App
