@@ -5,7 +5,7 @@ const dbVersion = 1
 const objectStoreName = 'jate'
 
 const initdb = async () =>
-	openDB(dbName, 1, {
+	openDB(dbName, dbVersion, {
 		upgrade(db) {
 			if (db.objectStoreNames.contains(objectStoreName)) {
 				console.log(`${dbName} database already exists`)
@@ -24,14 +24,18 @@ export const putDb = async (content) => {
 	// Open db
 	const db = await openDB(dbName, dbVersion)
 	// Transaction
-	const tx = await db.transaction(objectStoreName, 'readwrite')
+	const tx = db.transaction(objectStoreName, 'readwrite')
 	// Access store from tx
-	const store = await tx.objectStore(objectStoreName)
+	const store = tx.objectStore(objectStoreName)
 	// Add content to db
-	const result = await store.add({
+	const request = store.put({
+		id: 0,
     content
 	})
-	return result
+
+	const result = await request
+
+	console.log(result)
 }
 
 // TODO: Add logic for a method that gets all the content from the database
@@ -39,12 +43,14 @@ export const getDb = async () => {
   // Open db
   const db = await openDB(dbName, dbVersion)
   // Transaction
-  const tx = await db.transaction(objectStoreName, 'readonly')
+  const tx = db.transaction(objectStoreName, 'readonly')
   // Access store from tx
-  const store = await tx.objectStore(objectStoreName)
+  const store = tx.objectStore(objectStoreName)
   // Get all content
-  const results = await store.getAll()
-  return results
+  const request = store.getAll()
+
+	const result = await request
+  return result.content
 }
 
 initdb()
